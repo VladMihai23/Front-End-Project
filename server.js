@@ -17,6 +17,7 @@ app.get('/navbar', (req, res) => {
   res.render('navbar');
 })
 
+app.use(express.static('public'))
 
 
 app.listen(port, () => {
