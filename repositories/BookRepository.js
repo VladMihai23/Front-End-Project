@@ -1,0 +1,57 @@
+const db = require('../db');
+const Book = require('../models/BookModel');
+
+class BookRepository {
+
+  async getAll() {
+    const result = await db.manyOrNone("SELECT * FROM books ORDER BY id DESC");
+    return result.map(r => new Book(r));
+  }
+
+  async getById(id) {
+    const result = await db.oneOrNone("SELECT * FROM books WHERE id = $1", [id]);
+    return result ? new Book(result) : null;
+  }
+
+  async create(data) {
+    const result = await db.one(
+      `INSERT INTO books(title, author, price, genre, image_url, description)
+       VALUES($1, $2, $3, $4, $5, $6)
+         RETURNING *`,
+      [
+        data.title,
+        data.author,
+        data.price,
+        data.genre,
+        data.image_url,
+        data.description || null
+      ]
+    );
+    return new Book(result);
+  }
+
+  async update(id, data) {
+    const result = await db.one(
+      `UPDATE books
+       SET title=$1, author=$2, price=$3, genre=$4,
+           image_url=$5, description=$6
+       WHERE id=$7 RETURNING *`,
+      [
+        data.title,
+        data.author,
+        data.price,
+        data.genre,
+        data.image_url,
+        data.description || null,
+        id
+      ]
+    );
+    return new Book(result);
+  }
+
+  async delete(id) {
+    await db.none("DELETE FROM books WHERE id = $1", [id]);
+  }
+}
+
+module.exports = new BookRepository();

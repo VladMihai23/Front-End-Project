@@ -1,25 +1,29 @@
 const express = require('express');
 const app = express();
 const port = 3000
+const session = require('express-session');
 
 app.set('view engine', 'ejs')
 
-app.get('/', (req, res) => {
-  console.log('testing')
-  res.render('index');
-})
 
-app.get('/index', (req, res) => {
-  res.render('index');
-})
 
 app.get('/navbar', (req, res) => {
   res.render('navbar');
 })
 
-app.get('/user', (req, res) => {
-  res.render('user');
-})
+app.use(session({
+  secret: 'secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 1000 * 60 * 60 }
+}));
+
+app.use((req, res, next) => {
+  res.locals.session = req.session;
+  next();
+});
+
+
 
 app.use(express.static('public'))
 
@@ -33,4 +37,7 @@ app.use(express.json());
 
 const userRoutes = require('./routes/userRoutes');
 app.use(userRoutes);
+
+const bookRoutes = require('./routes/bookRoutes');
+app.use('/', bookRoutes);
 

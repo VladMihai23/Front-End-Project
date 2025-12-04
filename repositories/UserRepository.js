@@ -1,11 +1,20 @@
-const db = require('../db'); 
+const db = require('../db');
 const User = require('../models/UserModel');
 
 class UserRepository {
+
   async findByEmail(email) {
     const result = await db.oneOrNone(
       'SELECT * FROM users WHERE email = $1',
       [email]
+    );
+    return result ? new User(result) : null;
+  }
+
+  async findByUsername(username) {
+    const result = await db.oneOrNone(
+      'SELECT * FROM users WHERE username = $1',
+      [username]
     );
     return result ? new User(result) : null;
   }
