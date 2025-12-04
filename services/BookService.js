@@ -21,6 +21,12 @@ class BookService {
   async deleteBook(id) {
     return await BookRepository.delete(id);
   }
+
+  async searchBooks(query) {
+    return await BookRepository.searchBooks(query);
+  }
+
 }
+
 
 module.exports = new BookService();

@@ -52,6 +52,17 @@ class BookRepository {
   async delete(id) {
     await db.none("DELETE FROM books WHERE id = $1", [id]);
   }
+
+  async searchBooks(query) {
+    return await db.manyOrNone(
+      `SELECT * FROM books
+         WHERE LOWER(title) LIKE LOWER('%' || $1 || '%')
+         OR LOWER(author) LIKE LOWER('%' || $1 || '%')
+         OR LOWER(genre) LIKE LOWER('%' || $1 || '%')`,
+      [query]
+    );
+  }
+
 }
 
 module.exports = new BookRepository();

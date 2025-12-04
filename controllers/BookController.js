@@ -82,6 +82,24 @@ class BookController {
       res.status(500).send("Error deleting book.");
     }
   }
+
+  async searchBooks(req, res) {
+    try {
+      const query = req.query.q;
+      const books = await BookService.searchBooks(query);
+
+      res.render("search-results", {
+        query,
+        books
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Error searching books.");
+    }
+  }
+
+
+
 }
 
 module.exports = new BookController();
